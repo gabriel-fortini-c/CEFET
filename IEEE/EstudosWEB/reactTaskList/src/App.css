@@ -1,0 +1,26 @@
+.AppContainer {
+  position: fixed; /* fixa a div na tela */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #3d3e45;
+
+  display: flex;
+  justify-content: center;
+  padding: 6px;
+}
+
+.AppContent {
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.AppTitle {
+  font-size: 30px;
+  font-weight: bold;
+  color: rgb(200, 200, 200);
+  text-align: center;
+}

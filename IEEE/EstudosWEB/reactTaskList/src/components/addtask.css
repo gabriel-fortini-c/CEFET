@@ -1,0 +1,31 @@
+.addTaskContainer {
+  list-style: none;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #383641;
+}
+
+.inputTitle,
+.inputDescription {
+  border: 2px solid rgb(0, 0, 0);
+  padding-inline: 1rem;
+  padding-block: 1rem;
+  border-radius: 10px;
+  background-color: rgb(104, 104, 104);
+  color: white;
+}
+
+::placeholder {
+  color: white;
+  opacity: 25%;
+}
+
+.addButton {
+  background-color: #a87016;
+  color: white;
+  padding-inline: 1rem;
+  padding-block: 1rem;
+  border-radius: 10px;
+}

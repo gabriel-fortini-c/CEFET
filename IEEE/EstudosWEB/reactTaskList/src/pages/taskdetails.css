@@ -1,0 +1,58 @@
+.DetailContainer {
+  position: fixed; /* fixa a div na tela */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #3d3e45;
+
+  display: flex;
+  justify-content: center;
+  padding: 6px;
+}
+
+.DetailContent {
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.DetailTitleContent {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.returnButton {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.DetailTitle {
+  font-size: 30px;
+  font-weight: bold;
+  color: rgb(200, 200, 200);
+  text-align: center;
+  margin: 0;
+  flex-grow: 1;
+}
+
+.DetailTask {
+  background-color: #383641;
+  padding: 16px;
+  border-radius: 10px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.taskTitle {
+  color: white;
+  font-style: bold;
+}
+
+.taskDescription {
+  color: white;
+}

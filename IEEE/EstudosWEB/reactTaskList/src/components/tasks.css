@@ -1,0 +1,50 @@
+.taskContainer {
+  list-style: none;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #383641;
+}
+
+.task {
+  display: flex;
+  gap: 2px;
+}
+
+.taskButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  background-color: gray;
+  color: #f3f4f6;
+  padding: 5px;
+  border-radius: 10px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.line-through {
+  text-decoration: line-through;
+}
+
+.checkButton {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+}
+
+.detailButton {
+  background-color: gray;
+  color: #f3f4f6;
+  padding: 5px;
+  border-radius: 10px;
+}
+
+.deleteButton {
+  background-color: gray;
+  color: #f3f4f6;
+  padding: 5px;
+  border-radius: 10px;
+}

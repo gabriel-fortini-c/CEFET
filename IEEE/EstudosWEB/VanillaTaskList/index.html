@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lista de Tarefas Vanilla</title>
+    <link rel="stylesheet" href="indexStyles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="content">
+        <h1 class="title">Lista de Tarefas</h1>
+
+        <div class="addTaskContainer">
+          <input
+            id="input-title"
+            class="inputTitle"
+            type="text"
+            placeholder="Digite o título da tarefa"
+          />
+          <input
+            id="input-description"
+            class="inputDescription"
+            type="text"
+            placeholder="Digite a descrição da tarefa"
+          />
+          <button add-button class="addButton">Adicionar</button>
+        </div>
+
+        <ul class="taskContainer">
+          <li class="task">
+            <button task-button class="taskButton"></button>
+
+            <button detail-button class="detailButton"></button>
+
+            <button delete-button class="deleteButton"></button>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <script src="indexScripts.js"></script>
+  </body>
+</html>
