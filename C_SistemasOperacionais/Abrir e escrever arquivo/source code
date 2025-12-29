@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main (int argc, char* argv[])
+{
+    if (argc != 2) {
+        fprintf (stderr, "Uso correto: %s <arquivo>\n", argv[0]);
+        return 1;
+    }
+
+    FILE* arquivo;
+
+    if (arquivo = NULL) {
+        fprintf (stderr, "Erro! Não foi possível abrir o arquivo %s\n", argv[1]);
+        return 1;
+    }
+
+    arquivo = fopen(argv[1], "r");
+
+    char linha[256];
+    while (fgets(linha, 256, arquivo)) {
+        printf ("%s", linha);
+    }
+
+    fclose (arquivo);
+
+    return 0;
+}

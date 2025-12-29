@@ -1,0 +1,220 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+
+#define MAX_PATHS 10
+#define MAX_ARGS 100
+#define MAX_COMMAND_LEN 100
+
+char error_message[] = "An error has occurred\n";
+int nOfPathes = 1;
+char *paths[MAX_PATHS] = {"/bin", NULL};
+
+void error() {
+    write(STDERR_FILENO, error_message, strlen(error_message));
+}
+
+void parse_input(char *input, char **args) {
+    char *token;
+    int index = 0;
+
+    while ((token = strsep(&input, " \t\n")) != NULL) {
+        if (strlen(token) > 0) {
+            char *redir = strstr(token, ">");
+            if (redir != NULL) {
+                if (strcmp(token, ">") == 0) {
+                    args[index++] = token;
+                    token = strsep(&input, " \t\n");
+                    if (token && strlen(token) > 0) {
+                        args[index++] = token;
+                    }
+                } else {
+                    *redir = '\0';
+                    args[index++] = token;
+                    args[index++] = ">";
+                    args[index++] = redir + 1;
+                }
+            } else {
+                args[index++] = token;
+            }
+        }
+    }
+    args[index] = NULL;
+}
+
+int execute_command(char **args) {
+    if (args[0] == NULL) return 1;
+
+    for (int i = 0; i < nOfPathes; i++) {
+        char full_path[MAX_COMMAND_LEN];
+        snprintf(full_path, sizeof(full_path), "%s/%s", paths[i], args[0]);
+        
+        if (access(full_path, X_OK) == 0) {
+            pid_t pid = fork();
+            if (pid == 0) {
+                execv(full_path, args);
+                error();
+                exit(1);
+            } else if (pid > 0) {
+                wait(NULL);
+                return 0;
+            } else {
+                error();
+                return -1;
+            }
+        }
+    }
+
+    error();
+    return -1;
+}
+
+void handle_cd(char **args) {
+    if (args[1] == NULL || args[2] != NULL) {
+        error();
+        return;
+    }
+    if (chdir(args[1]) != 0) {
+        error();
+    }
+}
+
+void handle_exit(char **args) {
+    if (args[1] != NULL) {
+        error();
+    } else {
+        exit(0);
+    }
+}
+
+void handle_path(char **args) {
+    nOfPathes = 0;
+    for (int i = 1; args[i] != NULL && nOfPathes < MAX_PATHS; i++) {
+        paths[nOfPathes++] = strdup(args[i]);
+    }
+}
+
+int handle_redirection(char **args) {
+    char *output_file = NULL;
+    int i;
+    
+    for (i = 0; args[i] != NULL; i++) {
+        if (strcmp(args[i], ">") == 0) {
+            if (args[i + 1] == NULL || args[i + 2] != NULL) {
+                error();
+                return -1;
+            }
+            output_file = args[i + 1];
+            args[i] = NULL;
+            break;
+        }
+    }
+
+    if (output_file && args[0] == NULL) {
+        error();
+        return -1;
+    }
+
+    if (output_file) {
+        pid_t pid = fork();
+        if (pid == 0) {
+            int fd = open(output_file, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
+            if (fd == -1) {
+                error();
+                exit(1);
+            }
+            dup2(fd, STDOUT_FILENO);
+            close(fd);
+            int result = execute_command(args);
+            exit(result);
+        } else if (pid > 0) {
+            wait(NULL);
+            return 0;
+        } else {
+            error();
+            return -1;
+        }
+    } else {
+        return execute_command(args);
+    }
+}
+
+int handle_parallel_commands(char *input) {
+    char *commands[MAX_ARGS];
+    char *command;
+    int cmd_index = 0;
+
+    while ((command = strsep(&input, "&")) != NULL) {
+        if (strlen(command) > 0) {
+            commands[cmd_index++] = command;
+        }
+    }
+    commands[cmd_index] = NULL;
+
+    for (int i = 0; i < cmd_index; i++) {
+        pid_t pid = fork();
+        if (pid == 0) {
+            char *args[MAX_ARGS];
+            parse_input(commands[i], args);
+            handle_redirection(args);
+            exit(0);
+        } else if (pid < 0) {
+            error();
+            return -1;
+        }
+    }
+
+    for (int i = 0; i < cmd_index; i++) {
+        wait(NULL);
+    }
+    return 0;
+}
+
+int main(int argc, char *argv[]) {
+    char *input = NULL;
+    size_t len = 0;
+    FILE *input_stream = stdin;
+
+    if (argc == 2) {
+        input_stream = fopen(argv[1], "r");
+        if (input_stream == NULL) {
+            error();
+            exit(1);
+        }
+    } else if (argc > 2) {
+        error();
+        exit(1);
+    }
+
+    while (1) {
+        if (input_stream == stdin) printf("wish> ");
+        if (getline(&input, &len, input_stream) == -1) exit(0);
+
+        if (strchr(input, '&')) {
+            handle_parallel_commands(input);
+            continue;
+        }
+
+        char *args[MAX_ARGS];
+        parse_input(input, args);
+
+        if (args[0] == NULL) {
+            continue;
+        } else if (strcmp(args[0], "exit") == 0) {
+            handle_exit(args);
+        } else if (strcmp(args[0], "cd") == 0) {
+            handle_cd(args);
+        } else if (strcmp(args[0], "path") == 0) {
+            handle_path(args);
+        } else {
+            handle_redirection(args);
+        }
+    }
+
+    free(input);
+    return 0;
+}

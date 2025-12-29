@@ -1,0 +1,14 @@
+#include <stdio.h>
+#include <string.h>
+
+int misterio2 (char s[]) 
+{
+    int m = 0;
+    for (int=0 ; i < strlen (s) ; i++) {
+        if (s[i] >= 0 && s[i] <= 9) {
+            m = (m * 10) + s[i] - '0';
+        }
+    }
+    return m;
+}
+

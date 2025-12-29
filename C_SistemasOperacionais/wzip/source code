@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        printf ("wzip: file1 [file2 ...]\n");
+        return 1;
+    }
+
+    FILE * arquivo;
+    int charAtual, charAnterior = EOF;
+    int contador = 0;
+
+    for (int i = 1; i < argc; i++) {
+        arquivo = fopen(argv[i], "r");
+        if (arquivo == NULL) {
+            printf("wzip: cannot open file\n");
+            return 1;
+        }
+
+        while ((charAtual = fgetc(arquivo)) != EOF) {
+            if (charAtual == charAnterior) {
+                contador++;
+            } else {
+                if (contador > 0) {
+                    fwrite(&contador, sizeof(int), 1, stdout);
+                    fwrite(&charAnterior, sizeof(char), 1, stdout);
+                }
+                charAnterior = charAtual;
+                contador = 1;
+            }
+        }
+        fclose(arquivo);
+    }
+
+    if (contador > 0) {
+        fwrite(&contador, sizeof(int), 1, stdout);
+        fwrite(&charAnterior, sizeof(char), 1, stdout);
+    }
+
+    return 0;
+}

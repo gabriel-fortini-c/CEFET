@@ -1,0 +1,28 @@
+/******************************************************************************
+
+Welcome to GDB Online.
+  GDB online is an online compiler and debugger tool for C, C++, Python, PHP, Ruby, 
+  C#, OCaml, VB, Perl, Swift, Prolog, Javascript, Pascal, COBOL, HTML, CSS, JS
+  Code, Compile, Run and Debug online from anywhere in world.
+
+*******************************************************************************/
+#include <stdio.h>
+
+float novo_preco (float preco_unitario, float percentual)
+{
+    float preco, perc, novo_preco1;
+    return novo_preco1 = preco + (preco * (perc / 100));
+}
+
+
+int main()
+{
+    float preco_produto, aumento;
+    printf ("Insira o preço unitário do produto: ");
+    scanf ("%f", &preco_produto);
+    printf ("Insita o percentual de aumento: ")
+    scanf ("%f", &aumento)
+    printf ("O novo preço é: %g", novo_preco(preco_produto, aumento));
+    
+    return 0;
+}
